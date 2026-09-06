@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Janob Matematika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E1B33;
+    --navy-2:#16274A;
+    --gold:#C9A227;
+    --gold-bright:#E4C55A;
+    --cream:#F6F1E4;
+    --paper:#FBF8F0;
+    --ink:#1B2436;
+    --muted:#7A8296;
+    --good:#2F7D5E;
+    --bad:#B4463C;
+    --line:rgba(201,162,39,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(circle at 50% -10%, var(--navy-2), var(--navy) 60%);
+    color:var(--cream);
+    font-family:'Manrope',sans-serif;
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    padding-bottom:28px;
+  }
+  h1,h2,h3{font-family:'Fraunces',serif; margin:0;}
+  .screen{padding:20px 20px 12px;}
+  .hidden{display:none !important;}
+
+  /* ---- Pi-mark logo ---- */
+  .pi-mark{
+    width:1em; height:1em; display:inline-block; position:relative; top:0.05em;
+  }
+
+  /* ---- Header / splash ---- */
+  .brand-row{
+    display:flex; align-items:center; gap:12px; padding:22px 20px 8px;
+  }
+  .logo-badge{
+    width:46px; height:46px; border-radius:50%;
+    background:var(--navy-2);
+    border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; font-size:22px; color:var(--gold-bright);
+    flex-shrink:0;
+  }
+  .brand-name{font-family:'Fraunces',serif; font-weight:700; font-size:19px; color:var(--cream); letter-spacing:0.2px;}
+  .brand-sub{font-size:11.5px; color:var(--muted); margin-top:1px;}
+
+  .splash{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; flex:1; padding:40px 28px;
+  }
+  .splash .logo-badge{width:104px; height:104px; font-size:52px; margin-bottom:22px; border-width:3px;}
+  .splash h1{font-size:30px; color:var(--cream); line-height:1.15;}
+  .splash p{color:var(--muted); font-size:14.5px; margin-top:10px; line-height:1.55; max-width:320px;}
+  .splash .path-hint{margin-top:6px; color:var(--gold-bright); font-weight:600; font-size:14px;}
+  .cta{
+    margin-top:30px; background:var(--gold); color:var(--navy); border:none;
+    font-family:'Manrope',sans-serif; font-weight:800; font-size:15.5px;
+    padding:15px 30px; border-radius:14px; cursor:pointer; width:100%; max-width:280px;
+    box-shadow:0 8px 20px -8px rgba(201,162,39,0.6);
+  }
+  .cta:active{transform:scale(0.98);}
+  .cta.secondary{background:transparent; color:var(--gold-bright); border:1.5px solid var(--line); box-shadow:none; margin-top:12px;}
+
+  /* ---- Stat bar ---- */
+  .statbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 20px; border-bottom:1px solid var(--line);
+  }
+  .stat{display:flex; align-items:center; gap:6px; font-weight:700; font-size:14px;}
+  .stat .icon{font-size:15px;}
+  .stat.xp{color:var(--gold-bright);}
+  .stat.streak{color:#E8845C;}
+
+  /* ---- Level map ---- */
+  .map-intro{padding:18px 20px 4px;}
+  .map-intro h2{font-size:20px; color:var(--cream);}
+  .map-intro p{color:var(--muted); font-size:13px; margin-top:4px;}
+
+  .band{
+    margin:18px 20px 0; border:1px solid var(--line); border-radius:18px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+    overflow:hidden;
+  }
+  .band-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; cursor:default;
+  }
+  .band-title-wrap{display:flex; align-items:center; gap:10px;}
+  .band-badge{
+    width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:800; font-size:15px; flex-shrink:0;
+    border:1.5px solid var(--gold);
+  }
+  .band-badge.locked{border-color:rgba(122,130,150,0.4); color:var(--muted);}
+  .band-badge.active{background:var(--gold); color:var(--navy);}
+  .band-badge.done{background:var(--good); color:var(--paper); border-color:var(--good);}
+  .band-badge.open{color:var(--gold-bright);}
+  .band-name{font-weight:800; font-size:14.5px; color:var(--cream);}
+  .band-range{font-size:11px; color:var(--muted);}
+  .band-score{font-size:12.5px; font-weight:700; color:var(--gold-bright);}
+
+  .topics{padding:0 16px 14px;}
+  .topic-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:11px 10px; border-radius:12px; margin-top:6px;
+    background:rgba(255,255,255,0.03);
+  }
+  .topic-row.locked{opacity:0.42;}
+  .topic-left{display:flex; align-items:center; gap:10px;}
+  .topic-dot{
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:14px; background:rgba(201,162,39,0.15); flex-shrink:0;
+  }
+  .topic-dot.done{background:var(--good);}
+  .topic-name{font-size:13.5px; font-weight:600; color:var(--cream);}
+  .topic-meta{font-size:10.5px; color:var(--muted); margin-top:1px;}
+  .go-btn{
+    font-size:11.5px; font-weight:800; color:var(--navy); background:var(--gold-bright);
+    border:none; border-radius:9px; padding:7px 12px; cursor:pointer;
+  }
+  .go-btn.review{background:transparent; color:var(--gold-bright); border:1px solid var(--line);}
+
+  /* ---- Topic intro ---- */
+  .topic-intro{padding:10px 20px;}
+  .back-link{color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; display:inline-block; margin-bottom:14px;}
+  .card{
+    background:var(--paper); color:var(--ink); border-radius:18px; padding:20px;
+    box-shadow:0 14px 30px -14px rgba(0,0,0,0.5);
+  }
+  .card h2{font-size:19px; color:var(--navy);}
+  .card .lesson-text{font-size:14px; line-height:1.65; color:#3A4256; margin-top:10px;}
+  .card .lesson-text b{color:var(--navy);}
+  .example-box{
+    background:#F0E9D4; border-left:4px solid var(--gold); border-radius:8px;
+    padding:10px 12px; margin-top:12px; font-size:13.5px; color:#3A3624;
+  }
+
+  /* ---- Quiz ---- */
+  .quiz-progress-wrap{padding:14px 20px 0; display:flex; align-items:center; gap:10px;}
+  .quiz-progress-track{flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:6px; overflow:hidden;}
+  .quiz-progress-fill{height:100%; background:var(--gold); border-radius:6px; transition:width 0.3s ease;}
+  .quiz-count{font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap;}
+
+  .qcard{margin:16px 20px 0; background:var(--paper); color:var(--ink); border-radius:18px; padding:22px 18px; box-shadow:0 14px 30px -14px rgba(0,0,0,0.5);}
+  .q-eyebrow{font-size:11px; font-weight:800; color:var(--gold); letter-spacing:0.3px;}
+  .q-text{font-size:17px; font-weight:700; color:var(--navy); margin-top:8px; line-height:1.4;}
+  .options{margin-top:16px; display:flex; flex-direction:column; gap:9px;}
+  .opt{
+    text-align:left; padding:12px 14px; border-radius:12px; border:1.5px solid #E4DCC4;
+    background:#fff; font-size:14.5px; font-weight:600; color:var(--ink); cursor:pointer;
+    display:flex; align-items:center; gap:10px;
+  }
+  .opt .opt-letter{
+    width:24px; height:24px; border-radius:50%; background:#EFE9D6; color:var(--navy);
+    font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .opt.correct{border-color:var(--good); background:#E6F4EC;}
+  .opt.correct .opt-letter{background:var(--good); color:#fff;}
+  .opt.wrong{border-color:var(--bad); background:#FBEAE8;}
+  .opt.wrong .opt-letter{background:var(--bad); color:#fff;}
+  .opt:disabled{cursor:default;}
+
+  .feedback{margin-top:14px; font-size:13px; border-radius:10px; padding:10px 12px; font-weight:600;}
+  .feedback.good{background:#E6F4EC; color:var(--good);}
+  .feedback.bad{background:#FBEAE8; color:var(--bad);}
+
+  .quiz-actions{padding:16px 20px 4px;}
+
+  /* ---- Result ---- */
+  .result-wrap{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px 26px;}
+  .result-medal{
+    width:96px; height:96px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:800; font-size:30px; margin-bottom:18px; border:3px solid var(--gold);
+  }
+  .result-wrap h2{font-size:22px; color:var(--cream);}
+  .result-wrap p{color:var(--muted); font-size:14px; margin-top:8px; line-height:1.5;}
+  .score-pill{
+    margin-top:16px; background:rgba(201,162,39,0.15); border:1px solid var(--line); border-radius:12px;
+    padding:10px 18px; font-weight:800; color:var(--gold-bright); font-size:15px;
+  }
+
+  /* ---- cert screen ---- */
+  .cert{
+    margin:20px; padding:26px 20px; border-radius:18px; background:var(--paper); color:var(--navy);
+    text-align:center; border:3px double var(--gold);
+  }
+  .cert .pi-big{font-family:'Fraunces',serif; font-size:34px; color:var(--gold); font-weight:800;}
+  .cert h3{margin-top:8px; font-size:18px;}
+  .cert .cert-name{font-size:20px; font-weight:800; margin-top:14px; color:var(--navy-2);}
+  .cert .cert-level{margin-top:6px; font-size:26px; font-weight:900; font-family:'Fraunces',serif; color:var(--good);}
+
+  .footer-tag{
+    text-align:center; padding:16px 20px 4px; color:var(--muted); font-size:11.5px;
+  }
+  .footer-tag b{color:var(--gold-bright);}
+
+  /* ---- Auth screens ---- */
+  .auth-wrap{flex:1; display:flex; flex-direction:column; padding:34px 26px 20px;}
+  .auth-wrap .logo-badge{width:64px;height:64px;font-size:30px;margin-bottom:18px;}
+  .auth-wrap h1{font-size:23px; color:var(--cream); line-height:1.25;}
+  .auth-wrap p{color:var(--muted); font-size:13.5px; margin-top:8px; line-height:1.5;}
+  .field-label{font-size:12px; font-weight:700; color:var(--gold-bright); margin-top:26px; margin-bottom:8px; display:block;}
+  .phone-input-row{
+    display:flex; align-items:center; gap:8px; background:var(--paper); border-radius:14px; padding:14px 16px;
+  }
+  .phone-prefix{font-weight:800; color:var(--navy); font-size:16px;}
+  .phone-input-row input{
+    border:none; outline:none; background:transparent; font-size:16px; font-weight:700; color:var(--ink);
+    width:100%; font-family:'Manrope',sans-serif; letter-spacing:0.5px;
+  }
+  .otp-row{display:flex; gap:10px; margin-top:8px;}
+  .otp-box{
+    width:100%; aspect-ratio:1/1; text-align:center; font-size:22px; font-weight:800;
+    border-radius:12px; border:none; outline:none; background:var(--paper); color:var(--ink);
+    font-family:'Manrope',sans-serif;
+  }
+  .otp-box.filled{box-shadow:0 0 0 2px var(--gold) inset;}
+  .resend-link{margin-top:16px; font-size:13px; color:var(--gold-bright); font-weight:700; cursor:pointer; text-align:center;}
+  .demo-note{
+    margin-top:20px; background:rgba(201,162,39,0.12); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; font-size:12px; color:var(--muted); line-height:1.5;
+  }
+  .auth-error{margin-top:10px; font-size:12.5px; color:#E8846C; font-weight:700; min-height:16px;}
+  .user-chip{
+    display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); font-weight:700; cursor:pointer;
+  }
+
+  /* ---- Bottom nav ---- */
+  #app{padding-bottom:0;}
+  .app-body{flex:1; padding-bottom:78px;}
+  .bottom-nav{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px; background:var(--navy-2); border-top:1px solid var(--line);
+    display:flex; justify-content:space-around; align-items:center; padding:10px 4px 14px; z-index:50;
+  }
+  .nav-item{
+    display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
+    color:var(--muted); font-size:10.5px; font-weight:700; flex:1;
+  }
+  .nav-item .nav-icon{font-size:19px; line-height:1;}
+  .nav-item.active{color:var(--gold-bright);}
+
+  /* ---- Simple placeholder tab cards ---- */
+  .tab-hero{padding:20px 20px 4px;}
+  .tab-hero h2{font-size:21px; color:var(--cream);}
+  .tab-hero p{color:var(--muted); font-size:13px; margin-top:4px;}
+  .mini-card{
+    margin:14px 20px 0; background:var(--paper); color:var(--ink); border-radius:16px; padding:16px 16px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .mini-card .mini-icon{
+    width:42px; height:42px; border-radius:12px; background:#F0E9D4; display:flex; align-items:center;
+    justify-content:center; font-size:20px; flex-shrink:0;
+  }
+  .mini-card .mini-title{font-weight:800; font-size:14px; color:var(--navy);}
+  .mini-card .mini-sub{font-size:11.5px; color:#6b6b56; margin-top:2px;}
+  .mini-card .mini-tag{
+    margin-left:auto; font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px;
+  }
+  .mini-tag.done{background:#E6F4EC; color:var(--good);}
+  .mini-tag.todo{background:#F0E9D4; color:var(--navy);}
+
+  .profile-head{
+    padding:26px 20px 16px; display:flex; flex-direction:column; align-items:center; text-align:center;
+  }
+  .profile-avatar{
+    width:74px; height:74px; border-radius:50%; background:var(--navy-2); border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:800;
+    font-size:30px; color:var(--gold-bright); margin-bottom:10px;
+  }
+  .profile-stats{display:flex; gap:10px; padding:0 20px; margin-top:6px;}
+  .pstat{flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--line); border-radius:14px; padding:12px 8px; text-align:center;}
+  .pstat b{display:block; font-size:18px; color:var(--gold-bright); font-family:'Fraunces',serif;}
+  .pstat span{font-size:10.5px; color:var(--muted);}
+  .logout-row{margin:26px 20px 0;}
+
+  /* ---- Free course card ---- */
+  .course-card{
+    margin:16px 20px 0; border-radius:18px; padding:20px 18px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg, #1B2E52, #0E1B33); border:1px solid var(--line);
+  }
+  .course-card .course-tag{font-size:11px; font-weight:800; color:var(--gold-bright); letter-spacing:0.3px;}
+  .course-card h3{font-size:19px; color:var(--cream); margin-top:6px; line-height:1.25;}
+  .course-card p{font-size:12.5px; color:var(--muted); margin-top:6px;}
+  .course-card .course-cta{margin-top:14px; display:inline-flex; align-items:center; gap:6px; color:var(--gold-bright); font-weight:800; font-size:13.5px;}
+  .course-icon-big{position:absolute; right:-8px; top:-8px; font-size:70px; opacity:0.14;}
+
+  /* ---- Video list / player ---- */
+  .video-row{
+    display:flex; align-items:center; gap:12px; margin:10px 20px 0; background:var(--paper);
+    border-radius:14px; padding:12px; color:var(--ink);
+  }
+  .video-thumb{
+    width:56px; height:56px; border-radius:10px; background:#EFE9D6; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--navy);
+  }
+  .video-info .v-title{font-weight:800; font-size:13.5px; color:var(--navy);}
+  .video-info .v-sub{font-size:11px; color:#6b6b56; margin-top:2px;}
+  .video-empty{margin:20px; text-align:center; color:var(--muted); font-size:13px; padding:30px 20px; border:1px dashed var(--line); border-radius:16px;}
+  .video-player-wrap{margin:16px 20px 0; border-radius:16px; overflow:hidden; background:#000; aspect-ratio:16/9;}
+  .video-player-wrap iframe, .video-player-wrap video{width:100%; height:100%; border:none;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ===================== CONTENT ===================== */
+// Score bands mirror the real Milliy Sertifikat grading scale.
+const BANDS = [
+  {
+    id:'C', name:'C daraja', range:'46 – 49.9 ball', minScore:46,
+    topics:[
+      { id:'natural', name:"Natural sonlar va amallar", meta:"8 savol",
+        lesson:"Natural sonlar — sanoqda ishlatiladigan sonlar (1, 2, 3, ...). Qo'shish, ayirish, ko'paytirish va bo'lish — arifmetikaning to'rt asosiy amali. Amallar tartibi: avval qavs ichi, keyin ko'paytirish/bo'lish, so'ng qo'shish/ayirish.",
+        example:"Masalan: 12 + 3×4 = 12 + 12 = 24 (avval ko'paytirish bajariladi).",
+        questions:[
+          {q:"15 + 6×3 = ?", opts:["63","33","24","21"], correct:1},
+          {q:"(8+4)÷3 = ?", opts:["4","6","2","12"], correct:0},
+          {q:"120 ÷ 5 = ?", opts:["20","24","25","22"], correct:1},
+          {q:"7×8 − 20 = ?", opts:["36","56","46","40"], correct:0},
+          {q:"9×9 = ?", opts:["81","72","91","99"], correct:0},
+        ]},
+      { id:'kasr', name:"Oddiy kasrlar", meta:"6 savol",
+        lesson:"Kasr — butunning bir qismini ifodalaydi: surat / maxraj. Kasrlarni qo'shish uchun maxrajlarni tenglashtirish kerak.",
+        example:"1/2 + 1/4 = 2/4 + 1/4 = 3/4",
+        questions:[
+          {q:"1/3 + 1/3 = ?", opts:["2/3","2/6","1/3","2/9"], correct:0},
+          {q:"3/4 ning qisqartirilmagan holi:", opts:["6/8","3/4","9/16","6/9"], correct:1},
+          {q:"1/2 − 1/4 = ?", opts:["1/4","1/2","2/4","1/8"], correct:0},
+          {q:"2/5 ni foizga aylantiring:", opts:["20%","40%","25%","50%"], correct:1},
+        ]},
+    ]
+  },
+  {
+    id:'C+', name:"C+ daraja", range:'50 – 54.9 ball', minScore:50,
+    topics:[
+      { id:'foiz', name:"Foizlar", meta:"8 savol",
+        lesson:"Foiz — sonning 100 ulushidan biri. Sondan foizni topish uchun: son × foiz ÷ 100.",
+        example:"200 ning 15% i = 200×15÷100 = 30",
+        questions:[
+          {q:"300 ning 20% i nechaga teng?", opts:["60","50","40","30"], correct:0},
+          {q:"50 dan 10 necha foiz?", opts:["10%","15%","20%","25%"], correct:2},
+          {q:"Narxi 400 000 so'm bo'lgan tovar 25% chegirma bilan qancha turadi?", opts:["300 000","350 000","320 000","280 000"], correct:0},
+          {q:"120 ning 50% i:", opts:["60","70","50","65"], correct:0},
+        ]},
+      { id:'nisbat', name:"Nisbat va proporsiya", meta:"6 savol",
+        lesson:"Nisbat — ikki miqdorning bo'linmasi. Proporsiyada ichki hadlar ko'paytmasi tashqi hadlar ko'paytmasiga teng: a:b = c:d bo'lsa, a×d = b×c.",
+        example:"3:4 = x:12 bo'lsa, x = 3×12/4 = 9",
+        questions:[
+          {q:"2:5 = x:20 bo'lsa, x = ?", opts:["8","10","6","4"], correct:0},
+          {q:"6:9 nisbatini soddalashtiring:", opts:["3:4","2:3","1:2","4:5"], correct:1},
+          {q:"12 sonini 1:3 nisbatda ikkiga bo'ling — kichik qism:", opts:["3","4","6","2"], correct:0},
+        ]},
+    ]
+  },
+  {
+    id:'B', name:"B daraja", range:'55 – 59.9 ball', minScore:55,
+    topics:[
+      { id:'tenglama', name:"Chiziqli tenglamalar", meta:"8 savol",
+        lesson:"Tenglama — noma'lumni topish kerak bo'lgan tenglik. x ni yolg'iz qoldirish uchun teng kuchli amallardan foydalaniladi.",
+        example:"2x + 3 = 11 → 2x = 8 → x = 4",
+        questions:[
+          {q:"3x − 5 = 10 bo'lsa, x = ?", opts:["5","4","15","3"], correct:0},
+          {q:"2x + 7 = 15 bo'lsa, x = ?", opts:["4","3","8","11"], correct:0},
+          {q:"x/4 = 6 bo'lsa, x = ?", opts:["24","10","2","1.5"], correct:0},
+          {q:"5(x−2) = 15 bo'lsa, x = ?", opts:["5","3","7","1"], correct:0},
+        ]},
+      { id:'geometriya1', name:"Yuza va perimetr", meta:"6 savol",
+        lesson:"To'g'ri to'rtburchak yuzasi: en × bo'y. Perimetri: 2×(en+bo'y). Uchburchak yuzasi: (asos×balandlik)/2.",
+        example:"Tomonlari 5 va 8 bo'lgan to'g'ri to'rtburchak yuzasi = 40",
+        questions:[
+          {q:"Tomonlari 6 va 9 bo'lgan to'rtburchak yuzasi:", opts:["54","30","15","45"], correct:0},
+          {q:"Asosi 10, balandligi 4 bo'lgan uchburchak yuzasi:", opts:["20","40","14","24"], correct:0},
+          {q:"Tomoni 7 bo'lgan kvadrat perimetri:", opts:["28","49","14","21"], correct:0},
+        ]},
+    ]
+  },
+  {
+    id:'B+', name:"B+ daraja", range:'60 – 64.9 ball', minScore:60,
+    topics:[
+      { id:'funksiya', name:"Funksiya va grafik", meta:"6 savol",
+        lesson:"Funksiya — har bir x qiymatiga bitta y qiymatini mos qo'yuvchi qoida. y = kx + b — chiziqli funksiya, grafigi to'g'ri chiziq.",
+        example:"y = 2x + 1 da x=3 bo'lsa, y = 7",
+        questions:[
+          {q:"y = 3x − 2 da x = 4 bo'lsa, y = ?", opts:["10","12","9","14"], correct:0},
+          {q:"y = 2x funksiyaning grafigi qanday chiziq?", opts:["Koordinata boshidan o'tuvchi to'g'ri chiziq","Parabola","Aylana","Giperbola"], correct:0},
+          {q:"y = −x + 5 da x = 5 bo'lsa, y = ?", opts:["0","5","10","-5"], correct:0},
+        ]},
+      { id:'progressiya', name:"Arifmetik progressiya", meta:"6 savol",
+        lesson:"Arifmetik progressiyada har bir had oldingisidan bir xil songa (d) farq qiladi: a(n) = a(1) + (n−1)d.",
+        example:"a1=2, d=3 bo'lsa, a4 = 2+3×3 = 11",
+        questions:[
+          {q:"a1=5, d=2 bo'lsa, a5 = ?", opts:["13","11","15","10"], correct:0},
+          {q:"2, 5, 8, 11 ketma-ketligida d = ?", opts:["3","2","4","5"], correct:0},
+          {q:"a1=10, d=−3 bo'lsa, a3 = ?", opts:["4","7","1","13"], correct:0},
+        ]},
+    ]
+  },
+  {
+    id:'A', name:"A daraja", range:'65 – 69.9 ball', minScore:65,
+    topics:[
+      { id:'kvadrat', name:"Kvadrat tenglamalar", meta:"6 savol",
+        lesson:"ax²+bx+c=0 ko'rinishidagi tenglama diskriminant orqali yechiladi: D = b²−4ac, x = (−b±√D)/2a.",
+        example:"x²−5x+6=0 → D=25−24=1 → x1=3, x2=2",
+        questions:[
+          {q:"x²−4=0 tenglamaning ildizlari:", opts:["x=±2","x=2","x=−2","x=±4"], correct:0},
+          {q:"x²−5x+6=0 ning ildizlaridan biri:", opts:["2","1","4","5"], correct:0},
+          {q:"x²+2x+1=0 tenglamasining ildizi:", opts:["−1","1","0","2"], correct:0},
+        ]},
+      { id:'ehtimollik', name:"Ehtimollar nazariyasi", meta:"6 savol",
+        lesson:"Ehtimollik = qulay hodisalar soni / barcha mumkin hodisalar soni. Qiymati 0 dan 1 gacha bo'ladi.",
+        example:"Zar tashlanganda 4 tushish ehtimoli = 1/6",
+        questions:[
+          {q:"Tanga tashlanganda gerb tushish ehtimoli:", opts:["1/2","1/4","1","0"], correct:0},
+          {q:"Zarda juft son tushish ehtimoli:", opts:["1/2","1/3","1/6","2/3"], correct:0},
+          {q:"10 ta bilet ichida 2 tasi yutuqli. Tasodifiy bitta olinganda yutish ehtimoli:", opts:["1/5","1/10","2/10","1/2"], correct:0},
+        ]},
+    ]
+  },
+  {
+    id:'A+', name:"A+ daraja", range:'70+ ball', minScore:70,
+    topics:[
+      { id:'stereometriya', name:"Stereometriya asoslari", meta:"6 savol",
+        lesson:"Kub hajmi: a³. To'g'ri parallelepiped hajmi: en×bo'y×balandlik. Silindr hajmi: πr²h.",
+        example:"Qirrasi 3 bo'lgan kub hajmi = 27",
+        questions:[
+          {q:"Qirrasi 4 bo'lgan kub hajmi:", opts:["64","16","48","12"], correct:0},
+          {q:"O'lchamlari 2×3×5 bo'lgan parallelepiped hajmi:", opts:["30","10","15","20"], correct:0},
+          {q:"Radiusi 2, balandligi 5 bo'lgan silindr hajmi (π orqali):", opts:["20π","10π","4π","25π"], correct:0},
+        ]},
+      { id:'murakkab', name:"Murakkab masalalar (aralash)", meta:"8 savol",
+        lesson:"Milliy Sertifikat A+ darajasi bir nechta mavzuni birlashtirgan ko'p bosqichli masalalarni talab qiladi. Diqqat: har bir bosqichni alohida yeching.",
+        example:"Avval foizni toping, so'ng tenglama tuzing, keyin yeching.",
+        questions:[
+          {q:"Ikki son yig'indisi 40, ayirmasi 8. Katta son:", opts:["24","20","16","28"], correct:0},
+          {q:"Tovar narxi 20% oshirildi, keyin 20% kamaytirildi. Yakuniy narx boshlang'ichdan:", opts:["Kamroq","Teng","Ko'proq","Aniqlab bo'lmaydi"], correct:0},
+          {q:"x²−9=0 va x>0 bo'lsa, x = ?", opts:["3","9","−3","6"], correct:0},
+          {q:"3 ta ishchi 6 kunda bir ishni bajaradi. 2 ta ishchi necha kunda bajaradi?", opts:["9","12","6","4"], correct:0},
+        ]},
+    ]
+  },
+];
+
+/* ===================== STATE ===================== */
+let state = {
+  screen:'splash', // splash | phone | otp | map | topicIntro | quiz | result | cert
+  xp:0,
+  streak:0,
+  completedTopics:{}, // topicId -> {correct, total}
+  currentBandIdx:0,
+  currentTopic:null,
+  quiz:{ idx:0, answers:[], selected:null, locked:false },
+  auth:{ phone:'', otp:['','','',''], sentCode:'', error:'', user:null },
+};
+
+const DEMO_MODE = true; // no backend wired up yet — see note in UI
+
+// Free video lessons — add your own here: { title, sub, url }
+// url can be a YouTube embed link (https://www.youtube.com/embed/VIDEO_ID)
+// or a direct video file link (.mp4) hosted anywhere.
+const VIDEO_LESSONS = [
+  // Misol (namuna) — o'chirib, o'zingiznikini qo'shing:
+  // { title: "Natural sonlar bilan tanishuv", sub: "12 daqiqa · Kirish darsi", url: "https://www.youtube.com/embed/VIDEO_ID" },
+];
+
+function allTopicsFlat(){
+  let arr=[];
+  BANDS.forEach((b,bi)=> b.topics.forEach((t,ti)=> arr.push({bandIdx:bi, topicIdx:ti, topic:t})));
+  return arr;
+}
+
+function isBandUnlocked(bi){
+  if(bi===0) return true;
+  const prevBand = BANDS[bi-1];
+  return prevBand.topics.every(t => state.completedTopics[t.id]);
+}
+function isTopicUnlocked(bi, ti){
+  if(!isBandUnlocked(bi)) return false;
+  if(ti===0) return true;
+  const prevTopic = BANDS[bi].topics[ti-1];
+  return !!state.completedTopics[prevTopic.id];
+}
+function overallProgress(){
+  const flat = allTopicsFlat();
+  const done = flat.filter(x=>state.completedTopics[x.topic.id]).length;
+  return {done, total: flat.length};
+}
+function currentBandLabel(){
+  // highest unlocked-but-not-fully-done band, or A+ if all done
+  for(let i=0;i<BANDS.length;i++){
+    if(!BANDS[i].topics.every(t=>state.completedTopics[t.id])) return BANDS[i].id;
+  }
+  return 'A+';
+}
+
+/* ===================== RENDER ===================== */
+const app = document.getElementById('app');
+
+function render(){
+  if(state.screen==='splash') return renderSplash();
+  if(state.screen==='phone') return renderPhone();
+  if(state.screen==='otp') return renderOtp();
+  if(state.screen==='map') return renderWithNav(renderMap, 'home');
+  if(state.screen==='videos') return renderVideos();
+  if(state.screen==='videoPlayer') return renderVideoPlayer();
+  if(state.screen==='learn') return renderWithNav(renderLearnTab, 'learn');
+  if(state.screen==='games') return renderWithNav(renderGamesTab, 'games');
+  if(state.screen==='missions') return renderWithNav(renderMissionsTab, 'missions');
+  if(state.screen==='profile') return renderWithNav(renderProfileTab, 'profile');
+  if(state.screen==='topicIntro') return renderTopicIntro();
+  if(state.screen==='quiz') return renderQuiz();
+  if(state.screen==='result') return renderResult();
+  if(state.screen==='cert') return renderCert();
+}
+
+function logoSpan(size){
+  return `<span class="pi-mark">π</span>`;
+}
+
+function renderSplash(){
+  app.innerHTML = `
+    <div class="splash">
+      <div class="logo-badge">π</div>
+      <h1>Janob<br/>Matematika</h1>
+      <p>0 balldan <b style="color:var(--gold-bright)">A+ darajagacha</b> — Milliy Sertifikat matematika imtihoniga mustaqil tayyorlaning. Bosqichma-bosqich, qiziqarli va tekin.</p>
+      <div class="path-hint">C → C+ → B → B+ → A → A+</div>
+      <button class="cta" onclick="goPhone()">Ro'yxatdan o'tish</button>
+    </div>
+    <div class="footer-tag">Tayyorladi: <b>@janob_matematika</b></div>
+  `;
+}
+
+function goPhone(){
+  state.screen='phone';
+  state.auth.error='';
+  render();
+  setTimeout(()=>{ const el=document.getElementById('phoneInput'); if(el) el.focus(); }, 50);
+}
+
+function renderPhone(){
+  app.innerHTML = `
+    <div class="auth-wrap">
+      <div class="logo-badge">π</div>
+      <h1>Telefon raqamingizni kiriting</h1>
+      <p>Tasdiqlash kodi shu raqamga SMS orqali yuboriladi.</p>
+      <span class="field-label">TELEFON RAQAM</span>
+      <div class="phone-input-row">
+        <span class="phone-prefix">+998</span>
+        <input id="phoneInput" type="tel" inputmode="numeric" maxlength="9" placeholder="90 123 45 67"
+          value="${state.auth.phone}" oninput="onPhoneInput(this)">
+      </div>
+      <div class="auth-error">${state.auth.error}</div>
+      <div style="flex:1"></div>
+      <button class="cta" onclick="sendCode()">Kod yuborish</button>
+      ${DEMO_MODE ? `<div class="demo-note">⚠️ Demo rejim: bu HTML fayl mustaqil ishlaydi, backend yo'q — shuning uchun haqiqiy SMS yuborilmaydi. Kod ekranda ko'rsatiladi. Ishlab chiqarishga chiqishda Eskiz.uz yoki Play Mobile kabi SMS-shlyuz + backend server ulanishi kerak.</div>` : ''}
+    </div>
+  `;
+}
+
+function onPhoneInput(el){
+  state.auth.phone = el.value.replace(/[^0-9]/g,'');
+  state.auth.error='';
+}
+
+function sendCode(){
+  const phone = state.auth.phone;
+  if(phone.length<9){
+    state.auth.error = "To'liq telefon raqamini kiriting.";
+    render();
+    return;
+  }
+  // Simulated code generation — in production this call goes to your backend,
+  // which requests an SMS gateway (e.g. Eskiz.uz) to text the code to the user.
+  state.auth.sentCode = String(Math.floor(1000+Math.random()*9000));
+  state.auth.otp = ['','','',''];
+  state.screen='otp';
+  render();
+}
+
+function renderOtp(){
+  const otp = state.auth.otp;
+  const boxesHtml = otp.map((v,i)=>`
+    <input class="otp-box ${v?'filled':''}" id="otp${i}" type="tel" inputmode="numeric" maxlength="1"
+      value="${v}" oninput="onOtpInput(${i}, this)" onkeydown="onOtpKeydown(${i}, event)">
+  `).join('');
+  app.innerHTML = `
+    <div class="auth-wrap">
+      <div class="logo-badge">π</div>
+      <h1>Kodni kiriting</h1>
+      <p>+998 ${state.auth.phone} raqamiga 4 xonali kod yuborildi.</p>
+      <span class="field-label">TASDIQLASH KODI</span>
+      <div class="otp-row">${boxesHtml}</div>
+      <div class="auth-error">${state.auth.error}</div>
+      <div class="resend-link" onclick="sendCode()">Kodni qayta yuborish</div>
+      <div style="flex:1"></div>
+      <button class="cta" onclick="verifyCode()">Tasdiqlash</button>
+      ${DEMO_MODE ? `<div class="demo-note">⚠️ Demo rejim: haqiqiy SMS yo'q. Sizning kodingiz: <b style="color:var(--gold-bright)">${state.auth.sentCode}</b></div>` : ''}
+    </div>
+  `;
+  setTimeout(()=>{ const el=document.getElementById('otp0'); if(el) el.focus(); }, 50);
+}
+
+function onOtpInput(i, el){
+  const val = el.value.replace(/[^0-9]/g,'').slice(0,1);
+  state.auth.otp[i] = val;
+  state.auth.error='';
+  if(val && i<3){
+    const next = document.getElementById('otp'+(i+1));
+    if(next) next.focus();
+  }
+  // update filled styling without full re-render (keeps focus)
+  el.classList.toggle('filled', !!val);
+}
+
+function onOtpKeydown(i, ev){
+  if(ev.key==='Backspace' && !state.auth.otp[i] && i>0){
+    const prev = document.getElementById('otp'+(i-1));
+    if(prev) prev.focus();
+  }
+}
+
+function verifyCode(){
+  const entered = state.auth.otp.join('');
+  if(entered.length<4){
+    state.auth.error = "4 xonali kodni to'liq kiriting.";
+    render();
+    return;
+  }
+  if(entered !== state.auth.sentCode){
+    state.auth.error = "Kod noto'g'ri. Qayta urinib ko'ring.";
+    render();
+    return;
+  }
+  state.auth.user = { phone: state.auth.phone };
+  state.screen='map';
+  render();
+}
+
+function renderStatbar(){
+  const prog = overallProgress();
+  return `
+    <div class="statbar">
+      <div class="stat xp"><span class="icon">★</span> ${state.xp} XP</div>
+      <div class="stat"><span class="icon" style="color:var(--gold-bright)">📘</span> ${prog.done}/${prog.total} mavzu</div>
+      <div class="stat streak"><span class="icon">🔥</span> ${state.streak}</div>
+    </div>
+  `;
+}
+
+function renderMap(){
+  const cur = currentBandLabel();
+  let bandsHtml = BANDS.map((band, bi)=>{
+    const unlocked = isBandUnlocked(bi);
+    const bandDone = band.topics.every(t=>state.completedTopics[t.id]);
+    const badgeClass = bandDone ? 'done' : (unlocked ? (band.id===cur? 'active':'open') : 'locked');
+    const bandScore = band.topics.reduce((acc,t)=>{
+      const c = state.completedTopics[t.id];
+      return c ? acc + Math.round((c.correct/c.total)*100) : acc;
+    },0);
+    const topicsHtml = band.topics.map((t, ti)=>{
+      const tUnlocked = isTopicUnlocked(bi, ti);
+      const done = state.completedTopics[t.id];
+      return `
+        <div class="topic-row ${tUnlocked? '' : 'locked'}">
+          <div class="topic-left">
+            <div class="topic-dot ${done? 'done':''}">${done? '✓' : (tUnlocked? '✎' : '🔒')}</div>
+            <div>
+              <div class="topic-name">${t.name}</div>
+              <div class="topic-meta">${done? `${done.correct}/${done.total} to'g'ri` : t.meta}</div>
+            </div>
+          </div>
+          ${tUnlocked ? `<button class="go-btn ${done?'review':''}" onclick="openTopic(${bi},${ti})">${done? "Qayta ishlash":"Boshlash"}</button>` : ''}
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="band">
+        <div class="band-head">
+          <div class="band-title-wrap">
+            <div class="band-badge ${badgeClass}">${band.id}</div>
+            <div>
+              <div class="band-name">${band.name}</div>
+              <div class="band-range">${band.range}</div>
+            </div>
+          </div>
+          ${bandDone ? `<div class="band-score">${Math.round(bandScore/band.topics.length)}%</div>` : ''}
+        </div>
+        <div class="topics">${topicsHtml}</div>
+      </div>
+    `;
+  }).join('');
+
+  const allDone = BANDS.every(b=>b.topics.every(t=>state.completedTopics[t.id]));
+
+  return `
+    <div class="brand-row">
+      <div class="logo-badge" style="width:38px;height:38px;font-size:18px;">π</div>
+      <div style="flex:1">
+        <div class="brand-name">Janob Matematika</div>
+        <div class="brand-sub">Milliy Sertifikatga tayyorgarlik</div>
+      </div>
+      ${state.auth.user ? `<div class="user-chip" onclick="goProfileTab()">+998 ${state.auth.user.phone}</div>` : ''}
+    </div>
+    ${renderStatbar()}
+    <div class="course-card" onclick="goVideos()">
+      <div class="course-icon-big">🎬</div>
+      <div class="course-tag">BEPUL KURS</div>
+      <h3>Video darslar</h3>
+      <p>Mavzularni video orqali tushuntirib beruvchi bepul darslar to'plami.</p>
+      <div class="course-cta">Ko'rish →</div>
+    </div>
+    <div class="map-intro">
+      <h2>O'quv yo'lingiz</h2>
+      <p>Har bir bosqichni tugating — keyingisi ochiladi. Haqiqiy imtihon ballari asosida tuzilgan.</p>
+    </div>
+    ${bandsHtml}
+    ${allDone ? `<div style="padding:18px 20px;"><button class="cta" onclick="goCert()">Sertifikatni ko'rish 🎓</button></div>` : ''}
+    <div class="footer-tag">Har kuni 10 daqiqa — natija ko'zga tashlanadi.</div>
+  `;
+}
+
+/* ---- Bottom-nav wrapper ---- */
+const NAV_ITEMS = [
+  {id:'home', icon:'🏠', label:'Asosiy'},
+  {id:'learn', icon:'📘', label:"O'rganish"},
+  {id:'games', icon:'🎮', label:"O'yinlar"},
+  {id:'missions', icon:'🚩', label:'Missiya'},
+  {id:'profile', icon:'👤', label:'Profil'},
+];
+
+function renderWithNav(contentFn, activeTab){
+  const navHtml = NAV_ITEMS.map(n=>`
+    <div class="nav-item ${n.id===activeTab?'active':''}" onclick="switchTab('${n.id}')">
+      <div class="nav-icon">${n.icon}</div>
+      <div>${n.label}</div>
+    </div>
+  `).join('');
+  app.innerHTML = `
+    <div class="app-body">${contentFn()}</div>
+    <div class="bottom-nav">${navHtml}</div>
+  `;
+}
+
+function switchTab(id){
+  if(id==='home') state.screen='map';
+  else state.screen=id;
+  render();
+}
+function goVideos(){ state.screen='videos'; render(); }
+function goProfileTab(){ state.screen='profile'; render(); }
+
+function renderVideos(){
+  const rows = VIDEO_LESSONS.map((v, i)=>`
+    <div class="video-row" onclick="openVideo(${i})">
+      <div class="video-thumb">▶</div>
+      <div class="video-info">
+        <div class="v-title">${v.title}</div>
+        <div class="v-sub">${v.sub||''}</div>
+      </div>
+    </div>
+  `).join('');
+  app.innerHTML = `
+    <div class="brand-row"><div class="back-link" onclick="goMap()">← Xaritaga qaytish</div></div>
+    <div class="tab-hero" style="padding-top:0;">
+      <h2>Bepul video darslar</h2>
+      <p>Mavzularni video orqali tushunib oling.</p>
+    </div>
+    ${VIDEO_LESSONS.length ? rows : `<div class="video-empty">Hozircha video darslar qo'shilmagan.<br/>Kodda <b>VIDEO_LESSONS</b> ro'yxatiga qo'shishingiz mumkin.</div>`}
+    <div style="height:16px"></div>
+  `;
+}
+
+function openVideo(i){
+  state.currentVideo = i;
+  state.screen='videoPlayer';
+  render();
+}
+
+function renderVideoPlayer(){
+  const v = VIDEO_LESSONS[state.currentVideo];
+  const isYoutube = v.url.includes('youtube.com/embed');
+  const playerHtml = isYoutube
+    ? `<iframe src="${v.url}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`
+    : `<video src="${v.url}" controls autoplay></video>`;
+  app.innerHTML = `
+    <div class="brand-row"><div class="back-link" onclick="goVideos()">← Darslar ro'yxati</div></div>
+    <div class="video-player-wrap">${playerHtml}</div>
+    <div class="topic-intro" style="padding-top:14px;">
+      <h2 style="color:var(--cream); font-size:18px;">${v.title}</h2>
+      <p style="color:var(--muted); font-size:13px; margin-top:6px;">${v.sub||''}</p>
+    </div>
+  `;
+}
+
+function renderLearnTab(){
+  const flat = allTopicsFlat();
+  const rows = flat.map(({bandIdx, topicIdx, topic})=>{
+    const unlocked = isTopicUnlocked(bandIdx, topicIdx);
+    const done = state.completedTopics[topic.id];
+    return `
+      <div class="mini-card" style="${unlocked?'':'opacity:0.55;'}">
+        <div class="mini-icon">${done? '✓' : '📖'}</div>
+        <div>
+          <div class="mini-title">${topic.name}</div>
+          <div class="mini-sub">${BANDS[bandIdx].id} bosqich · ${topic.meta}</div>
+        </div>
+        ${unlocked ? `<div class="mini-tag ${done?'done':'todo'}" style="cursor:pointer" onclick="openTopic(${bandIdx},${topicIdx})">${done? "Ko'rish":"O'tish"}</div>` : `<div class="mini-tag todo">🔒</div>`}
+      </div>
+    `;
+  }).join('');
+  return `
+    <div class="tab-hero">
+      <h2>Barcha mavzular</h2>
+      <p>Mavzular bo'yicha erkin ko'rib chiqing va mashq qiling.</p>
+    </div>
+    ${rows}
+    <div style="height:14px"></div>
+  `;
+}
+
+function renderGamesTab(){
+  return `
+    <div class="tab-hero">
+      <h2>O'yinlar</h2>
+      <p>O'ynab turib matematikani mustahkamlang.</p>
+    </div>
+    <div class="mini-card">
+      <div class="mini-icon">⚡</div>
+      <div>
+        <div class="mini-title">Tezkor hisob</div>
+        <div class="mini-sub">60 soniyada nechta misol yechasiz?</div>
+      </div>
+      <div class="mini-tag todo">Tez orada</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-icon">⚔️</div>
+      <div>
+        <div class="mini-title">Versus</div>
+        <div class="mini-sub">Do'stingiz bilan bellashing</div>
+      </div>
+      <div class="mini-tag todo">Tez orada</div>
+    </div>
+  `;
+}
+
+function renderMissionsTab(){
+  const prog = overallProgress();
+  return `
+    <div class="tab-hero">
+      <h2>Kunlik missiya</h2>
+      <p>Har kuni bajaring — streak'ingizni saqlab qoling.</p>
+    </div>
+    <div class="mini-card">
+      <div class="mini-icon">📘</div>
+      <div>
+        <div class="mini-title">1 ta mavzu tugating</div>
+        <div class="mini-sub">Jami: ${prog.done}/${prog.total}</div>
+      </div>
+      <div class="mini-tag ${prog.done>0?'done':'todo'}">${prog.done>0? '✓':'0/1'}</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-icon">🔥</div>
+      <div>
+        <div class="mini-title">Streak'ni davom ettiring</div>
+        <div class="mini-sub">Hozirgi seriya: ${state.streak} kun</div>
+      </div>
+      <div class="mini-tag ${state.streak>0?'done':'todo'}">${state.streak>0? '✓':'0'}</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-icon">⭐</div>
+      <div>
+        <div class="mini-title">50 XP to'plang</div>
+        <div class="mini-sub">Hozirgi: ${state.xp} XP</div>
+      </div>
+      <div class="mini-tag ${state.xp>=50?'done':'todo'}">${state.xp>=50? '✓':state.xp+'/50'}</div>
+    </div>
+  `;
+}
+
+function renderProfileTab(){
+  const prog = overallProgress();
+  const phone = state.auth.user ? state.auth.user.phone : '';
+  return `
+    <div class="profile-head">
+      <div class="profile-avatar">π</div>
+      <div class="brand-name">${phone? '+998 '+phone : 'Mehmon'}</div>
+      <div class="brand-sub">Joriy daraja: ${currentBandLabel()}</div>
+    </div>
+    <div class="profile-stats">
+      <div class="pstat"><b>${state.xp}</b><span>XP</span></div>
+      <div class="pstat"><b>${state.streak}</b><span>Streak</span></div>
+      <div class="pstat"><b>${prog.done}/${prog.total}</b><span>Mavzu</span></div>
+    </div>
+    <div class="logout-row">
+      <button class="cta secondary" onclick="logout()">Chiqish</button>
+    </div>
+  `;
+}
+
+function openTopic(bi, ti){
+  state.currentBandIdx = bi;
+  state.currentTopic = {bandIdx:bi, topicIdx:ti, topic: BANDS[bi].topics[ti]};
+  state.screen='topicIntro';
+  render();
+}
+
+function renderTopicIntro(){
+  const t = state.currentTopic.topic;
+  app.innerHTML = `
+    <div class="topic-intro">
+      <div class="back-link" onclick="goMap()">← Xaritaga qaytish</div>
+      <div class="card">
+        <h2>${t.name}</h2>
+        <div class="lesson-text">${t.lesson}</div>
+        <div class="example-box">${t.example}</div>
+      </div>
+      <div style="padding-top:20px;">
+        <button class="cta" onclick="startQuiz()">Testni boshlash (${t.questions.length} savol)</button>
+      </div>
+    </div>
+  `;
+}
+
+function startQuiz(){
+  state.quiz = { idx:0, answers:[], selected:null, locked:false };
+  state.screen='quiz';
+  render();
+}
+
+function renderQuiz(){
+  const t = state.currentTopic.topic;
+  const qz = state.quiz;
+  const q = t.questions[qz.idx];
+  const total = t.questions.length;
+  const pct = Math.round((qz.idx/total)*100);
+  const letters = ['A','B','C','D'];
+
+  const optsHtml = q.opts.map((opt, oi)=>{
+    let cls='opt';
+    if(qz.locked){
+      if(oi===q.correct) cls+=' correct';
+      else if(oi===qz.selected) cls+=' wrong';
+    }
+    return `<button class="${cls}" ${qz.locked?'disabled':''} onclick="selectOpt(${oi})">
+      <span class="opt-letter">${letters[oi]}</span> ${opt}
+    </button>`;
+  }).join('');
+
+  let feedback = '';
+  if(qz.locked){
+    const isCorrect = qz.selected===q.correct;
+    feedback = `<div class="feedback ${isCorrect?'good':'bad'}">${isCorrect? "To'g'ri! Ajoyib 👏" : "Noto'g'ri. To'g'ri javob belgilandi."}</div>`;
+  }
+
+  app.innerHTML = `
+    <div class="brand-row" style="padding-bottom:0;">
+      <div class="back-link" onclick="goMap()">← Chiqish</div>
+    </div>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-count">${qz.idx+1}/${total}</div>
+    </div>
+    <div class="qcard">
+      <div class="q-eyebrow">${t.name}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optsHtml}</div>
+      ${feedback}
+    </div>
+    <div class="quiz-actions">
+      ${qz.locked ? `<button class="cta" onclick="nextQuestion()">${qz.idx+1<total? "Keyingisi":"Natijani ko'rish"}</button>` : ''}
+    </div>
+  `;
+}
+
+function selectOpt(oi){
+  const qz = state.quiz;
+  if(qz.locked) return;
+  qz.selected = oi;
+  qz.locked = true;
+  const t = state.currentTopic.topic;
+  const q = t.questions[qz.idx];
+  const correct = oi===q.correct;
+  qz.answers.push(correct);
+  if(correct){ state.xp += 10; }
+  render();
+}
+
+function nextQuestion(){
+  const t = state.currentTopic.topic;
+  state.quiz.idx++;
+  state.quiz.selected=null;
+  state.quiz.locked=false;
+  if(state.quiz.idx>=t.questions.length){
+    finishQuiz();
+  } else {
+    render();
+  }
+}
+
+function finishQuiz(){
+  const t = state.currentTopic.topic;
+  const correct = state.quiz.answers.filter(Boolean).length;
+  const total = t.questions.length;
+  state.completedTopics[t.id] = {correct, total};
+  const passed = correct/total >= 0.5;
+  if(passed) state.streak += 1; else state.streak = 0;
+  state.screen='result';
+  render();
+}
+
+function renderResult(){
+  const t = state.currentTopic.topic;
+  const r = state.completedTopics[t.id];
+  const pct = Math.round((r.correct/r.total)*100);
+  const good = pct>=70;
+  app.innerHTML = `
+    <div class="result-wrap">
+      <div class="result-medal" style="background:${good?'var(--good)':'rgba(180,70,60,0.18)'}; color:${good?'#fff':'var(--bad)'}; border-color:${good?'var(--good)':'var(--bad)'}">${pct}%</div>
+      <h2>${good? "Ajoyib natija!" : "Yana urinib ko'ring"}</h2>
+      <p>${t.name} mavzusi bo'yicha ${r.correct} ta savoldan ${r.total} tasiga to'g'ri javob berdingiz.</p>
+      <div class="score-pill">+${r.correct*10} XP olindi</div>
+    </div>
+    <div style="padding:0 26px 20px;">
+      <button class="cta" onclick="goMap()">Xaritaga qaytish</button>
+      <button class="cta secondary" onclick="startQuiz()">Qayta urinish</button>
+    </div>
+  `;
+}
+
+function goMap(){ state.screen='map'; render(); }
+
+function logout(){
+  state.auth = { phone:'', otp:['','','',''], sentCode:'', error:'', user:null };
+  state.screen='splash';
+  render();
+}
+
+function goCert(){ state.screen='cert'; render(); }
+
+function renderCert(){
+  app.innerHTML = `
+    <div class="brand-row"><div class="back-link" onclick="goMap()">← Xaritaga qaytish</div></div>
+    <div class="cert">
+      <div class="pi-big">π</div>
+      <h3>Janob Matematika</h3>
+      <div style="font-size:12.5px;color:#6b6b56;margin-top:4px;">O'quv yo'li muvaffaqiyatli yakunlandi</div>
+      <div class="cert-name">Barcha bosqichlar: C → A+</div>
+      <div class="cert-level">A+ DARAJA</div>
+      <div style="margin-top:14px;font-size:12.5px;color:#6b6b56;">Endi haqiqiy Milliy Sertifikat testlarini yechishga tayyorsiz.</div>
+    </div>
+    <div class="footer-tag">Ulashing: <b>@janob_matematika</b></div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
